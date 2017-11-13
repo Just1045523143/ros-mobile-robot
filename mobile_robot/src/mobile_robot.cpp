@@ -3,24 +3,23 @@
  *  -> Class providing generic tools for mobile robots.
  *
  *  Created on: September, 2016
- *      Author: Jakub Tomasek jtomasek@gmv.com
+ *      Author: Jakub Tomasek jakub@tomasek.fr
  */
 
 #include <mobile_robot/mobile_robot.h>
 
 
-MobileRobot::MobileRobot()
+MobileRobot::MobileRobot():
+N(0),//number of wheels
+//initializing limits to high numbers. When wheels added, limits are adjusted.
+max_speed_(1000),
+max_ackermann_speed_(1000),
+max_angular_speed_(1000),
+max_ackermann_angle_(M_PI / 2),
+max_crab_angle_(M_PI / 2)
+
 {
-	N = 0;
 
-	//initializing limits to high numbers. When wheels added, limits are adjusted.
-	max_speed_ = 1000;
-	max_ackermann_speed_ = 1000;
-	max_angular_speed_ = 1000;
-	max_ackermann_angle_ = M_PI / 2;
-	max_crab_angle_ = M_PI / 2;
-
-	//TODO determine these values from the wheels constaints
 
 }
 
@@ -29,7 +28,8 @@ MobileRobot::MobileRobot()
 void MobileRobot::addWheel(float radius, float l, float alpha, float beta, float max_angular_speed, float min_angle, float max_angle) {
 		robot::Wheel new_wheel;
 		new_wheel.id = N;
-		N++;
+		N++; //increase number of wheels
+
 		new_wheel.type = robot::wheel_type::STEERABLE;
 		new_wheel.r = radius;
 		new_wheel.l = l;
@@ -141,14 +141,6 @@ bool MobileRobot::checkSteerWheel(int wheel_id, float& wheel_angle) {
 
 }
 
-//TODO move to separate class OurRover extending Mobile Robot
-float MobileRobot::getPointTurnWheelSpeed(const float robot_angular_velocity) {
-	if(N > 0) {
-		robot::Wheel w = wheels.at(0);
-		return robot_angular_velocity * w.l / w.r;
-	}
-	else return 0;
-}
 
 float MobileRobot::getWheelAngularSpeed(float robot_speed) {
 	if(N > 0) {
